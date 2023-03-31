@@ -322,12 +322,32 @@ insert into Zeit values('202204', 'April', '202202', '2. Quartal', '2022')
 insert into Zeit values('202205', 'Mai', '202202', '2. Quartal', '2022')
 insert into Zeit values('202206', 'Juni', '202202', '2. Quartal', '2022')
 
---1.5 in Arbeit
+--1.5
 Update MitarbeiterShop set Name = 'Kevin Freund' where Mitarbeiter_ID = '02'
 Update Produktkategorie set Kategorie_Manager = 'Kevin Freund' where Kategorie_ID = '01'
 Alter table MitarbeiterShop add Manager_ID varchar(25)
 Update MitarbeiterShop set Manager_ID = Mitarbeiter_ID where Mitarbeiter_ID = '01'
-Update MitarbeiterShop set Manager_ID = Mitarbeiter_ID where MitarbeiterShop.Name = (Select Katagorie_Manager from Produktkategorie)
-
+Alter table MitarbeiterShop add foreign key (Manager_ID) references MitarbeiterShop (Mitarbeiter_ID)
+Update MitarbeiterShop set Manager_ID = '02' where MitarbeiterShop.Name in (Select Kategorie_Manager from Produktkategorie)
+Update MitarbeiterShop set Manager_ID = '03' where MitarbeiterShop.Name in (Select Subkategorie_Manager from Produktsubkategorie)
 Select * from MitarbeiterShop
-Select * from Produktkategorie
+
+--1.7
+--Bon_ID Identifikation des Bon
+--Fil_ID Filialie
+--Datum des jeweiligen Umsatzes
+--Spezifisches Produkt
+--Verkaufspreis pro Stück
+--verkaufte Menge
+
+--1.8 in Arbeit
+--Create Table BelegeTMP(Bon_ID varchar(4), Fil_ID varchar(5), Datum date, Prod_ID varchar(4) foreign key references Produkt(Produkt_ID), Preis money, Anzahl varchar(4), primary key(Bon_ID, Fil_ID, Datum, Prod_ID))
+Create Table BelegeTMP(Bon_ID varchar(4), Fil_ID varchar(5), Datum date, Prod_ID varchar(4), Preis money, Anzahl varchar(4))
+Create Table UmsatzdatenTMP(Mon_ID varchar(6) foreign key references Zeit(Mon_ID), Land_ID varchar(2) foreign key references Geografie(Land_ID), Produkt_ID varchar(4) foreign key references Produkt(Produkt_ID), Mitarbeiter_ID varchar(2) foreign key references MitarbeiterShop(Mitarbeiter_ID), Umsatzbetrag money, Umsatzmenge Integer, primary key(Mon_ID, Land_ID, Produkt_ID, Mitarbeiter_ID))
+BULK INSERT BelegeTMP 
+ FROM 'D:\BI\Belege_YYYY_Q.csv'
+ [ WITH (
+ [ [ , ] FIELDTERMINATOR = 'field_terminator' ]
+ [ [ , ] FIRSTROW =first_row ]
+ [ [ , ] ROWTERMINATOR = 'row_terminator' ]
+ )] 
