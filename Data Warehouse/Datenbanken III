@@ -341,13 +341,29 @@ Select * from MitarbeiterShop
 --verkaufte Menge
 
 --1.8 in Arbeit
---Create Table BelegeTMP(Bon_ID varchar(4), Fil_ID varchar(5), Datum date, Prod_ID varchar(4) foreign key references Produkt(Produkt_ID), Preis money, Anzahl varchar(4), primary key(Bon_ID, Fil_ID, Datum, Prod_ID))
-Create Table BelegeTMP(Bon_ID varchar(4), Fil_ID varchar(5), Datum date, Prod_ID varchar(4), Preis money, Anzahl varchar(4))
+Create Table BelegeTMP(Bon_ID varchar(4), Fil_ID varchar(5), Datum date, Prod_ID varchar(4), Preis money, Anzahl int)
 Create Table UmsatzdatenTMP(Mon_ID varchar(6) foreign key references Zeit(Mon_ID), Land_ID varchar(2) foreign key references Geografie(Land_ID), Produkt_ID varchar(4) foreign key references Produkt(Produkt_ID), Mitarbeiter_ID varchar(2) foreign key references MitarbeiterShop(Mitarbeiter_ID), Umsatzbetrag money, Umsatzmenge Integer, primary key(Mon_ID, Land_ID, Produkt_ID, Mitarbeiter_ID))
-BULK INSERT BelegeTMP 
- FROM 'D:\BI\Belege_YYYY_Q.csv'
- [ WITH (
- [ [ , ] FIELDTERMINATOR = 'field_terminator' ]
- [ [ , ] FIRSTROW =first_row ]
- [ [ , ] ROWTERMINATOR = 'row_terminator' ]
- )] 
+--1.8 b)
+--YYYY_Q [2021-2022_1-4}
+BULK INSERT BelegeTMP
+ FROM 'D:\BI\Belege_2022_4.csv'
+ WITH 
+ (
+ FIELDTERMINATOR = ',',
+ FIRSTROW = 2,
+ ROWTERMINATOR = '\n'
+ );
+
+
+INSERT INTO UmsatzdatenTMP Select Concat(datepart(year, Datum ), format(datepart(month, Datum), '00')), Left(Fil_ID, 2), Prod_ID, '01', Sum(Preis * Anzahl), Sum(Anzahl )
+from BelegeTMP
+Group by Concat(datepart(year, Datum ), format(datepart(month, Datum), '00')), Left(Fil_ID, 2), Prod_ID
+
+Insert Into Umsatzdaten Select * from UmsatzdatenTMP
+Select * from Produktsubkategorie
+Alter table Produktsubkategorie (Mitarbeiter_ID) values (10), (09), (04), (05), (11), (06), (18), (12), (16), (14), (17), (20);
+
+Alter table Produktsubkategorie add Mitarbeiter_ID varchar(2);
+
+Select * from Umsatzdaten
+Select Sum(Umsatzbetrag) as Gesamtumsatz from Umsatzdaten
