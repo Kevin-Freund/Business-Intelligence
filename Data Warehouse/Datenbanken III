@@ -359,11 +359,12 @@ INSERT INTO UmsatzdatenTMP Select Concat(datepart(year, Datum ), format(datepart
 from BelegeTMP
 Group by Concat(datepart(year, Datum ), format(datepart(month, Datum), '00')), Left(Fil_ID, 2), Prod_ID
 
+Alter table Produktsubkategorie add Mitarbeiter_ID varchar(2) foreign key references MitarbeiterShop(Mitarbeiter_ID);
+Update Produktsubkategorie set Mitarbeiter_ID = '05' where Subkategorie_ID = 004
+Select * from Produktsubkategorie;
+
+UPDATE UmsatzdatenTMP SET Mitarbeiter_ID = ( SELECT Mitarbeiter_ID from Produktsubkategorie ps, Produkt p where ps.Subkategorie_ID = p.Subkategorie_ID and p.Produkt_ID = UmsatzdatenTMP.Produkt_ID)
+
 Insert Into Umsatzdaten Select * from UmsatzdatenTMP
-Select * from Produktsubkategorie
-Alter table Produktsubkategorie (Mitarbeiter_ID) values (10), (09), (04), (05), (11), (06), (18), (12), (16), (14), (17), (20);
-
-Alter table Produktsubkategorie add Mitarbeiter_ID varchar(2);
-
 Select * from Umsatzdaten
 Select Sum(Umsatzbetrag) as Gesamtumsatz from Umsatzdaten
