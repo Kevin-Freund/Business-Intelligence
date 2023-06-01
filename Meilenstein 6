@@ -1,0 +1,14 @@
+--Meilenstein 6
+--Aufgabe 6.1
+Create Table Plandaten (Mon_ID varchar(6) foreign key references Zeit(Mon_ID), Land_ID varchar(2) foreign key references Geografie(Land_ID), Produkt_ID varchar(4) foreign key references Produkt(Produkt_ID), Umsatzplan money, primary key(Mon_ID, Land_ID, Produkt_ID))
+--Aufgabe 6.2
+BULK INSERT Plandaten
+ FROM 'D:\BI\Plandaten.csv'
+ WITH 
+ (
+ FIELDTERMINATOR = ';',
+ FIRSTROW = 2,
+ ROWTERMINATOR = '\n'
+ );
+
+ Drop table Plandaten
