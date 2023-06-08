@@ -1,0 +1,66 @@
+ --Meilenstein 7
+ --Aufgabe 7.1
+SELECT z.Monatsname, z.Jahr, m.Name, p.Produktname, g.Bundesland, u.Umsatzbetrag
+FROM Umsatzdaten u
+JOIN Mitarbeitershop m ON m.Mitarbeiter_ID = u.Mitarbeiter_ID
+JOIN Produkt p ON p.Produkt_ID = u.Produkt_ID
+JOIN Geografie g ON g.Land_ID = u.Land_ID
+JOIN Zeit z ON u.Mon_ID = z.Mon_ID
+WHERE g.Bundesland = 'Sachsen' OR g.Bundesland = 'Thüringen'
+
+--Aufgabe 7.2
+SELECT g.Bundesland, SUM(u.Umsatzbetrag) AS 'Summe Umsatzbetrag', SUM(u.Umsatzmenge) AS 'Summe Umsatzmenge'
+FROM Umsatzdaten u
+JOIN Geografie g ON g.Land_ID = u.Land_ID
+WHERE g.Bundesland = 'Sachsen' OR g.Bundesland = 'Thüringen'
+GROUP BY g.Bundesland
+
+--Aufgabe 7.3
+SELECT g.Bundesland, z.Quartal, SUM(u.Umsatzbetrag) AS 'Summe Umsatzbetrag', SUM(u.Umsatzmenge) AS 'Summe Umsatzmenge'
+FROM Umsatzdaten u
+JOIN Geografie g ON g.Land_ID = u.Land_ID
+JOIN Zeit z ON u.Mon_ID = z.Mon_ID
+WHERE g.Bundesland = 'Sachsen' OR g.Bundesland = 'Thüringen'
+GROUP BY g.Bundesland, z.Quartal
+
+--Aufgabe 7.4
+SELECT SUM(u.Umsatzbetrag) AS 'Summe', g.Staat, s.Subkategorie
+FROM Umsatzdaten u, Geografie g , Produkt p,Produktsubkategorie s
+WHERE  g.Land_ID = u.Land_ID AND p.Produkt_ID = u.Produkt_ID AND s.Subkategorie_ID = p.Subkategorie_ID
+GROUP BY g.Staat, s.Subkategorie
+
+--Aufgabe 7.5
+SELECT SUM(u.Umsatzbetrag) AS 'Summe', g.Staat, s.Subkategorie
+FROM Umsatzdaten u, Geografie g , Produkt p,Produktsubkategorie s
+WHERE  g.Land_ID = u.Land_ID AND p.Produkt_ID = u.Produkt_ID AND s.Subkategorie_ID = p.Subkategorie_ID
+GROUP BY g.Staat, s.Subkategorie
+With Cube
+
+--Aufgabe 7.6
+SELECT SUM(u.Umsatzbetrag) AS 'Summe', g.Staat, s.Subkategorie, z.Jahr
+FROM Umsatzdaten u, Geografie g , Produkt p,Produktsubkategorie s, Zeit z
+WHERE  g.Land_ID = u.Land_ID AND p.Produkt_ID = u.Produkt_ID AND s.Subkategorie_ID = p.Subkategorie_ID AND u.Mon_ID = z.Mon_ID
+GROUP BY g.Staat, s.Subkategorie, z.Jahr
+With Cube
+
+
+--Aufgabe 7.7
+SELECT SUM(u.Umsatzbetrag) AS 'Summe', g.Staat, g.Region, g.Bundesland
+FROM Umsatzdaten u, Geografie g
+WHERE  g.Land_ID = u.Land_ID 
+GROUP BY g.Staat, g.Region, g.Bundesland
+WITH ROLLUP
+
+--Aufgabe 7.8
+SELECT SUM(u.Umsatzbetrag) AS 'Summe', k.Kategorie, s.Subkategorie, p.Produktname
+FROM Umsatzdaten u, Produktkategorie k , Produkt p, Produktsubkategorie s
+WHERE  p.Produkt_ID = u.Produkt_ID AND s.Subkategorie_ID = p.Subkategorie_ID AND s.Kategorie_ID = k.Kategorie_ID
+GROUP BY k.Kategorie, s.Subkategorie, p.Produktname
+WITH ROLLUP
+
+--Aufgabe 7.9
+SELECT SUM(u.Umsatzbetrag) AS 'Summe', k.Kategorie, s.Subkategorie, p.Markenname+''+p.Produktname
+FROM Umsatzdaten u, Produktkategorie k , Produkt p, Produktsubkategorie s
+WHERE  p.Produkt_ID = u.Produkt_ID AND s.Subkategorie_ID = p.Subkategorie_ID AND s.Kategorie_ID = k.Kategorie_ID
+GROUP BY k.Kategorie, s.Subkategorie, p.Produktname, p.Markenname+''+p.Produktname
+WITH ROLLUP
