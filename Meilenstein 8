@@ -1,0 +1,70 @@
+--Meilenstein 8
+--Aufgabe 8.1
+SELECT  
+    { [Geographie].[Bundesland].[Sachsen], [Geographie].[Bundesland].[Thüringen] } 
+ON COLUMNS,  
+    { [Measures].[Umsatzbetrag], [Measures].[Umsatzmenge] } 
+ON ROWS  
+FROM [Umsatz];
+
+--Aufgabe 8.2
+SELECT  
+    { [Geographie].[Bundesland].[Sachsen], [Geographie].[Bundesland].[Thüringen] } 
+ON COLUMNS,  
+    { [Measures].[Umsatzbetrag], [Measures].[Umsatzmenge] } 
+ON ROWS  
+FROM [Umsatz] 
+WHERE [Zeit].[Jahr].&[2022];
+
+--Aufgabe 8.3
+SELECT  
+    { [Geographie].[Bundesland].[Sachsen], [Geographie].[Bundesland].[Thüringen] } 
+ON COLUMNS,  
+CROSSJOIN ( {[Zeit].[Kalender].[Jahr].[2022]} , {[Produkt].[Sortiment].[Kategorie]} ) 
+ON ROWS  
+FROM [Umsatz] 
+WHERE ([Measures].[Umsatzbetrag]);
+
+--Aufgabe 8.4
+SELECT  
+	{ [Geographie].[Bundesland].[Sachsen], [Geographie].[Bundesland].[Thüringen] } 
+ON COLUMNS,  
+    {[Zeit].[Kalender].[Jahr].[2022]} * {[Produkt].[Sortiment].[Kategorie].[Backwaren].Children}  
+ ON ROWS  
+FROM [Umsatz] 
+WHERE [Measures].[Umsatzbetrag];
+
+--Aufgabe 8.5
+SELECT  
+CROSSJOIN ( {[Zeit].[Kalender].[Jahr].[2022]}, {[Geographie].[Unternehmen].[Staat]} ) 
+ON COLUMNS,  
+    { [Produkt].[Sortiment].[Kategorie] } 
+ON ROWS  
+FROM [Umsatz] 
+WHERE [Measures].[Umsatzbetrag];
+
+--Aufgabe 8.6
+SELECT  
+	{[Geographie].[Unternehmen].[Staat]} * {[Produkt].[Sortiment].[Kategorie]} 
+ON COLUMNS,  
+    {[Measures].[Umsatzbetrag], [Measures].[Umsatzmenge]} 
+ON ROWS  
+FROM [Umsatz] 
+WHERE [Zeit].[Kalender].[Jahr].&[2022];
+
+--Aufgabe 8.7
+SELECT  
+	{[Geographie].[Unternehmen].[Staat]}  *{[Produkt].[Sortiment].[Kategorie]} 
+ON COLUMNS,  
+	CROSSJOIN ( {([Zeit].[Jahr].Children)}, {([Zeit].[Quartal].Children)}, {([Zeit].[Monat].Members)} ) 
+ON ROWS  
+FROM [Umsatz]
+WHERE [Measures].[Umsatzbetrag];
+
+--Aufgabe 8.8
+SELECT  
+	{[Produkt].[Sortiment].[Kategorie].MEMBERS} ON COLUMNS,  
+CROSSJOIN ( {([Zeit].[Quartal].Children)}, {([Zeit].[Monat].Children)}, {([Measures].[Umsatzbetrag]), ([Measures].[Umsatzmenge]) }) 
+ON ROWS  
+FROM [Umsatz] 
+WHERE ([Zeit].[Jahr].[2022]);
